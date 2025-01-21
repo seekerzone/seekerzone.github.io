@@ -73,9 +73,9 @@ display: block;
 position: absolute;
 top: 10px;
 left: 50%;
-transform: translateX(-50%);
+transform: translateX(-40%);
 z-index: 1000;
-width: 60%;
+width: 40%;
 display: flex;
 background-color: white;
 border: 1px solid #ccc;
@@ -103,9 +103,9 @@ cursor: pointer;
     position: absolute;
     top: 50px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-40%);
     z-index: 1000;
-    width: 60%;
+    width: 40%;
     margin-top: 0px;
     overflow: hidden;
 }
@@ -224,7 +224,7 @@ cursor: pointer;
 /* Style for the submit button container */
 .submit-button-container {
     position: absolute;
-    top: 10px;
+    bottom:20px;
     right: 10px;
     z-index: 1100;
 }
