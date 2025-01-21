@@ -11,30 +11,35 @@
       <div id="map"></div>
       <!-- Search Bar -->
       <div class="search-bar">
-         <input type="text" id="searchInput" placeholder="Search location..." />
+         <input type="text" id="searchInput" placeholder="Search game location" />
          <button onclick="searchLocation()">Search</button>
       </div>
       <!-- Display Search Results -->
       <div id="searchResults" class="search-results"></div>
       <!-- Add the custom button -->
       <div class="custom-button" onclick="toggleMenu()">
-         <img src="images/three_lines.png" alt="Button Image" />
+        <img src="images/three_lines.png" alt="Button Image" />
       </div>
       <!-- Add the sliding menu -->
       <div class="menu" id="menu">
-         <button class="close-button" onclick="toggleMenu()">X</button>
-         <h2>Menu</h2>
-         <ul>
+        <button class="close-button" onclick="toggleMenu()">X</button>
+        <h2>Question Menu</h2>
+        <ul>
             <li><a href="#">Item 1</a></li>
             <li><a href="#">Item 2</a></li>
             <li><a href="#">Item 3</a></li>
             <li><a href="#">Item 4</a></li>
-         </ul>
+        </ul>
       </div>
       <script src="utils.js"></script>
       <script>
          // Initialize Leaflet
-         var map = L.map('map').setView({lon: 8.363, lat: 47.037}, 9);
+         var mapOptions = {
+          center: [47.037,8.363],
+          zoom: 9,
+          zoomControl: false
+         }
+         var map = L.map('map',mapOptions)
          
          // Add the OpenStreetMap tiles
          L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
@@ -47,51 +52,36 @@
          
          var popup = L.popup();
          
-         function onMapClick(e) {
-             popup
-                 .setLatLng(e.latlng)
-                 .setContent("You clicked the map at " + e.latlng.toString())
+         function onMapClick(e) { 
+          const latLng = e.latlng;
+          const coordinates = `${latLng.lat.toFixed(5)},${latLng.lng.toFixed(5)}`;
+
+          // Copy coordinates to clipboard
+          navigator.clipboard.writeText(coordinates)
+              .then(() => {
+                popup
+                 .setLatLng(latLng)
+                 .setContent(`Coordinates copied: ${latLng.lat.toFixed(5)},${latLng.lng.toFixed(5)}`)
                  .openOn(map);
+              })
+              .catch(err => {
+                  alert("Failed to copy coordinates: " + err);
+              });
          }
          
          map.on('click', onMapClick);
+
+         document.getElementById('searchInput').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+              searchLocation();
+            }
+          });
          
          // Toggle menu visibility
          function toggleMenu() {
            const menu = document.getElementById('menu');
            menu.classList.toggle('open');
          }
-         
-         // Search location
-         function searchLocation() {
-           const input = document.getElementById('searchInput').value;
-           if (!input) {
-             alert('Please enter a search term');
-             return;
-           }
-         
-           const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(input)}&format=xml`;
-         
-           fetch(url)
-             .then(response => {
-               if (!response.ok) {
-                 throw new Error('Network response was not ok');
-               }
-               return response.text();
-             })
-             .then(data => {
-               displayResults(data);
-             })
-             .catch(error => {
-               console.error('Error fetching location:', error);
-             });
-            
-           clearMap();
-         }
-         
-         displayResults(data);
-         
-
       </script>
    </body>
 </html>
