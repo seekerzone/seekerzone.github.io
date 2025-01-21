@@ -11,11 +11,26 @@
       <div id="map"></div>
       <!-- Search Bar -->
       <div class="search-bar">
-         <input type="text" id="searchInput" placeholder="Search game location" />
+         <input type="text" id="searchInput" placeholder="Search location..." />
          <button onclick="searchLocation()">Search</button>
       </div>
       <!-- Display Search Results -->
       <div id="searchResults" class="search-results"></div>
+      <!-- Add the custom button -->
+      <div class="custom-button" onclick="toggleMenu()">
+         <img src="images/three_lines.png" alt="Button Image" />
+      </div>
+      <!-- Add the sliding menu -->
+      <div class="menu" id="menu">
+         <button class="close-button" onclick="toggleMenu()">X</button>
+         <h2>Menu</h2>
+         <ul>
+            <li><a href="#">Item 1</a></li>
+            <li><a href="#">Item 2</a></li>
+            <li><a href="#">Item 3</a></li>
+            <li><a href="#">Item 4</a></li>
+         </ul>
+      </div>
       <script src="utils.js"></script>
       <script>
          // Initialize Leaflet
@@ -32,30 +47,14 @@
          
          var popup = L.popup();
          
-         function onMapClick(e) { 
-          const latLng = e.latlng;
-          const coordinates = `${latLng.lat.toFixed(5)},${latLng.lng.toFixed(5)}`;
-
-          // Copy coordinates to clipboard
-          navigator.clipboard.writeText(coordinates)
-              .then(() => {
-                popup
-                 .setLatLng(latLng)
-                 .setContent(`Coordinates copied: ${latLng.lat.toFixed(5)},${latLng.lng.toFixed(5)}`)
+         function onMapClick(e) {
+             popup
+                 .setLatLng(e.latlng)
+                 .setContent("You clicked the map at " + e.latlng.toString())
                  .openOn(map);
-              })
-              .catch(err => {
-                  alert("Failed to copy coordinates: " + err);
-              });
          }
          
          map.on('click', onMapClick);
-
-         document.getElementById('searchInput').addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-              searchLocation();
-            }
-          });
          
          // Toggle menu visibility
          function toggleMenu() {
@@ -70,9 +69,8 @@
              alert('Please enter a search term');
              return;
            }
-           clearMap();//Remove the polygons from the previous results
          
-           const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(input)}&layer=address&limit=5&format=xml&polygon_geojson=1&polygon_threshold=0.0005`;
+           const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(input)}&format=xml`;
          
            fetch(url)
              .then(response => {
@@ -88,8 +86,10 @@
                console.error('Error fetching location:', error);
              });
             
+           clearMap();
          }
          
+         displayResults(data);
          
 
       </script>

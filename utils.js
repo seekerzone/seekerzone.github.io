@@ -6,37 +6,33 @@ function displayResults(xml) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, 'application/xml');
     const places = xmlDoc.getElementsByTagName('place');
+
+    if(places.length == 0){
+        alert('No results for the search term');
+    }
     
-    Array.from(places).forEach(place => {
+    const sortedPlaces = Array.from(places)
+    .sort((a, b) => parseFloat(b.getAttribute('importance')) - parseFloat(a.getAttribute('importance')))
+    .slice(0, 3); // Limit to the top 3 places
+    
+    sortedPlaces.forEach(place => {
         const displayName = place.getAttribute('display_name'); 
-        const boundingBox = place.getAttribute('boundingbox').split(',');
+        const geojsonData = JSON.parse(place.getAttribute('geojson'));
     
         const resultButton = document.createElement('button');
         resultButton.textContent = displayName;
         resultButton.onclick = function() {
-        // Parse the bounding box into lat/lon coordinates
-        const [minLat, maxLat, minLon, maxLon] = boundingBox;
-        const latLngs = [
-            [minLat, minLon],
-            [minLat, maxLon],
-            [maxLat, maxLon],
-            [maxLat, minLon],
-            [minLat, minLon]
-        ];
+            const geoJsonLayer = L.geoJSON(geojsonData, {
+                style: {
+                    color: 'blue',
+                    weight: 2,
+                    opacity: 0.5
+                }
+            }).addTo(map);
     
-        // Create a bounding box polygon and zoom the map
-        const polyline = L.polyline(latLngs, {color: 'red'}).addTo(map);
-        map.fitBounds(polyline.getBounds());
-    
+            // Fit the map to the bounds of the GeoJSON layer
+            map.fitBounds(geoJsonLayer.getBounds());
         };
-        setTimeout(() => {
-        polyline.setStyle({
-        opacity: 0, // Fade to invisible
-        weight: 0,  // Optionally reduce the weight (line thickness)
-        dashArray: '5, 5', // Optional, add dashed effect
-        });
-        
-    }, 5000);
     
         resultsContainer.appendChild(resultButton);
     });
