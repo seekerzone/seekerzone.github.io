@@ -221,16 +221,37 @@ cursor: pointer;
     opacity: 0.5;
 }
 
-/* Style for the submit button container */
-.submit-button-container {
+/* Style for the submit input container */
+.submit-input-container {
     position: absolute;
-    bottom:20px;
+    bottom: 20px;
     right: 10px;
     z-index: 1100;
+    display: flex;
+    align-items: center;
+}
+
+/* Style for the input field */
+.submit-input-container input {
+    padding: 10px 15px;
+    width: 200px;
+    background-color: #ffffff;
+    color: #333;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.submit-input-container input:focus {
+    border-color: #0056b3; /* Darker border on focus */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Style for the submit button */
-.submit-button-container button {
+.submit-input-container button {
     padding: 10px 15px;
     background-color: #007bff;
     color: white;
@@ -239,14 +260,15 @@ cursor: pointer;
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
+    margin-left: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
 }
 
-.submit-button-container button:hover {
+.submit-input-container button:hover {
     background-color: #0056b3; /* Darker blue on hover */
 }
 
-.submit-button-container button:active {
+.submit-input-container button:active {
     background-color: #004085; /* Even darker blue when active */
 }

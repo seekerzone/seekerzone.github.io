@@ -144,32 +144,45 @@ function searchLocation() {
         });
 }
 
-function submit(){
-    // Initialize an empty GeoJSON object for the union 
-    let combinedPolygon = null;
+function submit() {
+    const itemName = document.getElementById('item-name').value;
 
-    // Iterate over each game area
-    gameArea.forEach(place => {
-        const geojsonData = place.geojson; // Get GeoJSON data from place
-        
-        if (geojsonData.type === "MultiPolygon"){
-            currentPolygon = turf.multiPolygon(geojsonData.coordinates);
-        }
-        if (geojsonData.type === "Polygon"){
-            currentPolygon = turf.polygon(geojsonData.coordinates);
-        }
-        console.log('Combined GeoJSON:', geojsonData);
-    }); 
+    if (itemName.trim()) {
+        // Initialize an empty GeoJSON object for the union
+        let combinedPolygon = null;
 
-    if (currentPolygon) {
-        L.geoJSON(currentPolygon, {
-            style: {
-                color: 'purple', // Set a custom color for the combined polygon
-                weight: 2,
-                opacity: 0.7,
-                fillOpacity: 0.4
-            }
-        }).addTo(map);
+        // Iterate over each game area
+        if (gameArea) {
+            gameArea.forEach(place => {
+                const geojsonData = place.geojson; // Get GeoJSON data from place
+
+                let currentPolygon = null;
+                if (geojsonData.type === "MultiPolygon") {
+                    currentPolygon = turf.multiPolygon(geojsonData.coordinates);
+                }
+                if (geojsonData.type === "Polygon") {
+                    currentPolygon = turf.polygon(geojsonData.coordinates);
+                }
+
+                if (combinedPolygon == null) {
+                    combinedPolygon = currentPolygon;
+                } else {
+                    combinedPolygon = turf.union(currentPolygon, combinedPolygon);
+                }
+            });
+        }
+
+        // Temp solution to handle enclaves
+        if (combinedPolygon && combinedPolygon.geometry.coordinates.length > 1) {
+            combinedPolygon.geometry.coordinates = [combinedPolygon.geometry.coordinates[0]];
+            const geoJsonString = JSON.stringify(combinedPolygon);
+            localStorage.setItem(itemName, geoJsonString);
+
+            // Redirect to the next page, passing the item name as a query parameter
+            window.location.href = `game.html?item=${encodeURIComponent(itemName)}`;
+        }
+    } else {
+        alert('Please enter an item name.');
     }
-
 }
+

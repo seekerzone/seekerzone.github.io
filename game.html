@@ -1,87 +1,93 @@
 <!DOCTYPE HTML>
 <html lang="en">
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-      <link rel="stylesheet" href="style.css" />
-   </head>
-   <body>
-      <div id="map"></div>
-      <!-- Search Bar -->
-      <div class="search-bar">
-         <input type="text" id="searchInput" placeholder="Search game location" />
-         <button onclick="searchLocation()">Search</button>
-      </div>
-      <!-- Display Search Results -->
-      <div id="searchResults" class="search-results"></div>
-      <!-- Add the custom button -->
-      <div class="custom-button" onclick="toggleMenu()">
-        <img src="images/three_lines.png" alt="Button Image" />
-      </div>
-      <!-- Add the sliding menu -->
-      <div class="menu" id="menu">
-        <button class="close-button" onclick="toggleMenu()">X</button>
-        <h2>Question Menu</h2>
-        <ul>
-            <li><a href="#">Item 1</a></li>
-            <li><a href="#">Item 2</a></li>
-            <li><a href="#">Item 3</a></li>
-            <li><a href="#">Item 4</a></li>
-        </ul>
-      </div>
-      <script src="utils.js"></script>
-      <script>
-         // Initialize Leaflet
-         var mapOptions = {
-          center: [47.037,8.363],
-          zoom: 9,
-          zoomControl: false
-         }
-         var map = L.map('map',mapOptions)
-         
-         // Add the OpenStreetMap tiles
-         L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
-           maxZoom: 19,
-           attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-         }).addTo(map);
-         
-         // Show the scale bar on the lower left corner
-         L.control.scale({imperial: true, metric: true}).addTo(map);
-         
-         var popup = L.popup();
-         
-         function onMapClick(e) { 
-          const latLng = e.latlng;
-          const coordinates = `${latLng.lat.toFixed(5)},${latLng.lng.toFixed(5)}`;
-
-          // Copy coordinates to clipboard
-          navigator.clipboard.writeText(coordinates)
-              .then(() => {
-                popup
-                 .setLatLng(latLng)
-                 .setContent(`Coordinates copied: ${latLng.lat.toFixed(5)},${latLng.lng.toFixed(5)}`)
-                 .openOn(map);
-              })
-              .catch(err => {
-                  alert("Failed to copy coordinates: " + err);
-              });
-         }
-         
-         map.on('click', onMapClick);
-
-         document.getElementById('searchInput').addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-              searchLocation();
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div id="map"></div>
+        <!-- Add the custom button -->
+        <div class="custom-button" onclick="toggleMenu()">
+            <img src="images/three_lines.png" alt="Button Image" />
+        </div>
+        <!-- Add the sliding menu -->
+        <div class="menu" id="menu">
+            <button class="close-button" onclick="toggleMenu()">X</button>
+            <h2>Question Menu</h2>
+            <ul>
+                <li><a href="#">Item 1</a></li>
+                <li><a href="#">Item 2</a></li>
+                <li><a href="#">Item 3</a></li>
+                <li><a href="#">Item 4</a></li>
+            </ul>
+        </div>
+        <script src="game.js"></script>
+        <script>
+            // Initialize Leaflet
+            var mapOptions = {
+             center: [47.037,8.363],
+             zoom: 9,
+             zoomControl: false
             }
-          });
-         
-         // Toggle menu visibility
-         function toggleMenu() {
-           const menu = document.getElementById('menu');
-           menu.classList.toggle('open');
-         }
-      </script>
-   </body>
+            var map = L.map('map',mapOptions)
+            var popup = L.popup();
+            map.on('click', onMapClick);
+            var currentLayer = null;
+            
+            // Add the OpenStreetMap tiles
+            L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+            }).addTo(map);
+            
+            // Load the item name from the query parameter
+            const itemName = getQueryParam('item');
+            
+            if (itemName) {
+               // Retrieve the GeoJSON from local storage
+               const geoJsonString = localStorage.getItem(itemName);
+            
+               if (geoJsonString) {
+                   const combinedPolygon = JSON.parse(geoJsonString);
+            
+                   // Display the polygon on the map
+                   if (combinedPolygon) {
+            
+                       // Add the GeoJSON to the map
+                       currentLayer = L.geoJSON(combinedPolygon, {
+                           style: {
+                               color: 'purple', // Set a custom color for the combined polygon
+                               weight: 2,
+                               opacity: 0.7,
+                               fillOpacity: 0.4
+                           }
+                       }).addTo(map);
+            
+                       // Fit the map to the bounds of the polygon
+                       const bounds = L.geoJSON(combinedPolygon).getBounds();
+                       map.fitBounds(bounds);
+                   }
+               } else {
+                   alert('No GeoJSON data found for the selected item.');
+               }
+            } else {
+               alert('No item specified.');
+            }
+
+            document.getElementById('searchInput').addEventListener('keydown', function (event) {
+               if (event.key === 'Enter') {
+                 searchLocation();
+               }
+             });
+            
+            // Toggle menu visibility
+            function toggleMenu() {
+              const menu = document.getElementById('menu');
+              menu.classList.toggle('open');
+            }
+        </script>
+    </body>
 </html>

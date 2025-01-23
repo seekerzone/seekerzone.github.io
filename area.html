@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="en">
+   <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
+      <script src="utils.js"></script>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+      <link rel="stylesheet" href="style.css" />
+   </head>
+   <body>
+      <div id="map"></div>
+      <!-- Hints -->
+      <div id="hintBox" class="hint-box">
+        <h3>Hints</h3>
+        <ul>
+           <li><span class="red-circle"></span> Game Area</li>
+           <li><span class="blue-circle"></span> Area Preview</li>
+           <li>Click on red area to remove</li>
+           <li>Click submit once the red area is completed</li>
+        </ul>
+     </div>
+     <div class="submit-input-container">
+      <input type="text" placeholder="Enter area name" id="item-name">
+      <button type="button" onclick="submit()">Submit</button>
+    </div>
+      <!-- Search Bar -->
+      <div class="search-bar">
+         <input type="text" id="searchInput" placeholder="Search game location" />
+         <button onclick="searchLocation()">Search</button>
+      </div>
+      <!-- Display Search Results -->
+      <div id="searchResults" class="search-results"></div>
+      <script>
+         // Initialize Leaflet
+         var mapOptions = {
+          center: [47.037,8.363],
+          zoom: 9,
+          zoomControl: false
+         }
+         var map = L.map('map',mapOptions)
+         
+         // Add the OpenStreetMap tiles
+         L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
+           maxZoom: 19,
+           attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+         }).addTo(map);
+         
+
+         document.getElementById('searchInput').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+              searchLocation();
+            }
+          });
+         
+         // Toggle menu visibility
+         function toggleMenu() {
+           const menu = document.getElementById('menu');
+           menu.classList.toggle('open');
+         }
+      </script>
+   </body>
+</html>

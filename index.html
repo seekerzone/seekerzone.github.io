@@ -1,65 +1,60 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
-      <script src="utils.js"></script>
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-      <link rel="stylesheet" href="style.css" />
-   </head>
-   <body>
-      <div id="map"></div>
-      <!-- Hints -->
-      <div id="hintBox" class="hint-box">
-        <h3>Hints</h3>
-        <ul>
-           <li><span class="red-circle"></span> Game Area</li>
-           <li><span class="blue-circle"></span> Area Preview</li>
-           <li>Click on red area to remove</li>
-           <li>Click submit once the red area is completed</li>
-        </ul>
-     </div>
-     <div id="submitButtonContainer" class="submit-button-container">
-      <button id="submitButton" onclick="submit()">Submit</button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Selector</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Select Game</h1>
+        <button id="newGameButton" class="new-game-button" onclick="redirectToNewGame()">New Game</button>
+        <div id="gameButtons" class="button-list">
+            <!-- Buttons from local storage will be added here -->
+        </div>
     </div>
-      <!-- Search Bar -->
-      <div class="search-bar">
-         <input type="text" id="searchInput" placeholder="Search game location" />
-         <button onclick="searchLocation()">Search</button>
-      </div>
-      <!-- Display Search Results -->
-      <div id="searchResults" class="search-results"></div>
-      <script>
-         // Initialize Leaflet
-         var mapOptions = {
-          center: [47.037,8.363],
-          zoom: 9,
-          zoomControl: false
-         }
-         var map = L.map('map',mapOptions)
-         
-         // Add the OpenStreetMap tiles
-         L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
-           maxZoom: 19,
-           attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-         }).addTo(map);
-         
-         // Show the scale bar on the lower left corner
-         L.control.scale({imperial: true, metric: true}).addTo(map);
 
-         document.getElementById('searchInput').addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-              searchLocation();
-            }
-          });
-         
-         // Toggle menu visibility
-         function toggleMenu() {
-           const menu = document.getElementById('menu');
-           menu.classList.toggle('open');
-         }
-      </script>
-   </body>
+    <script>
+        // Function to populate the buttons based on local storage
+        function loadButtonsFromLocalStorage() {
+            const gameButtonsContainer = document.getElementById('gameButtons');
+            gameButtonsContainer.innerHTML = ''; // Clear existing buttons
+
+            // Get all keys from local storage
+            const keys = Object.keys(localStorage);
+
+            // Create a button for each key
+            keys.forEach(key => {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'button-container';
+
+                const button = document.createElement('button');
+                button.className = 'game-button';
+                button.textContent = key; // Use the key as the button label
+                button.onclick = () => alert(`Selected: ${key}`);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-button';
+                deleteButton.textContent = 'X';
+                deleteButton.onclick = () => {
+                    localStorage.removeItem(key); // Remove item from local storage
+                    loadButtonsFromLocalStorage(); // Reload the buttons
+                };
+
+                buttonContainer.appendChild(button);
+                buttonContainer.appendChild(deleteButton);
+                gameButtonsContainer.appendChild(buttonContainer);
+            });
+        }
+
+        // Redirect to area.html when "New Game" button is clicked
+        function redirectToNewGame() {
+            window.location.href = 'area.html';
+        }
+
+        // Load the buttons on page load
+        window.onload = loadButtonsFromLocalStorage;
+    </script>
+</body>
 </html>
