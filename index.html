@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
+    <div class="element"></div>
     <div class="container">
         <h1>Select Game</h1>
         <button id="newGameButton" class="new-game-button" onclick="redirectToNewGame()">New Game</button>
@@ -14,8 +15,8 @@
             <!-- Buttons from local storage will be added here -->
         </div>
     </div>
-
-    <script>
+</body>
+    <script> 
         // Function to populate the buttons based on local storage
         function loadButtonsFromLocalStorage() {
             const gameButtonsContainer = document.getElementById('gameButtons');
@@ -32,7 +33,9 @@
                 const button = document.createElement('button');
                 button.className = 'game-button';
                 button.textContent = key; // Use the key as the button label
-                button.onclick = () => alert(`Selected: ${key}`);
+                button.onclick = () => { 
+                    window.location.href = `game.html?item=${key}`;
+                };
 
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
@@ -56,5 +59,4 @@
         // Load the buttons on page load
         window.onload = loadButtonsFromLocalStorage;
     </script>
-</body>
 </html>

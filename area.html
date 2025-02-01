@@ -5,6 +5,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
+      <script src='osmtogeojson.js'></script>
       <script src="utils.js"></script>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
       <link rel="stylesheet" href="style.css" />
@@ -27,13 +28,15 @@
     </div>
       <!-- Search Bar -->
       <div class="search-bar">
-         <input type="text" id="searchInput" placeholder="Search game location" />
+         <input type="text" id="searchInput" placeholder="Search game location by name or OSM id..." />
          <button onclick="searchLocation()">Search</button>
       </div>
       <!-- Display Search Results -->
       <div id="searchResults" class="search-results"></div>
+   
+   </body>
       <script>
-         // Initialize Leaflet
+
          var mapOptions = {
           center: [47.037,8.363],
           zoom: 9,
@@ -42,7 +45,7 @@
          var map = L.map('map',mapOptions)
          
          // Add the OpenStreetMap tiles
-         L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
+         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
            maxZoom: 19,
            attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
          }).addTo(map);
@@ -53,12 +56,6 @@
               searchLocation();
             }
           });
-         
-         // Toggle menu visibility
-         function toggleMenu() {
-           const menu = document.getElementById('menu');
-           menu.classList.toggle('open');
-         }
+      
       </script>
-   </body>
 </html>

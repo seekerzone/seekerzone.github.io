@@ -73,9 +73,9 @@ display: block;
 position: absolute;
 top: 10px;
 left: 50%;
-transform: translateX(-40%);
+transform: translateX(-50%);
 z-index: 1000;
-width: 40%;
+width: 80%;
 display: flex;
 background-color: white;
 border: 1px solid #ccc;
@@ -165,7 +165,7 @@ cursor: pointer;
 /* Style for the hint box */
 .hint-box {
     position: absolute;
-    top: 10px;
+    bottom: 10px;
     left: 10px;
     width: 20vw;
     padding: 10px;
@@ -272,3 +272,5 @@ cursor: pointer;
 .submit-input-container button:active {
     background-color: #004085; /* Even darker blue when active */
 }
+
+ 

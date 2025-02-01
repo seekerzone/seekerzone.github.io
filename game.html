@@ -4,6 +4,14 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script> 
+        <script src="https://cdn.jsdelivr.net/npm/d3-geo-voronoi@2"></script> 
+        <script src="https://cdn.jsdelivr.net/npm/d3-geo@3"></script>
+        <script src="https://cdn.jsdelivr.net/npm/d3-geo-projection@4"></script>
+        <script src='osmtogeojson.js'></script>
+        <script src="game.js"></script>
+        <script src="utils.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <link rel="stylesheet" href="style.css" />
     </head>
@@ -23,8 +31,7 @@
                 <li><a href="#">Item 3</a></li>
                 <li><a href="#">Item 4</a></li>
             </ul>
-        </div>
-        <script src="game.js"></script>
+        </div> 
         <script>
             // Initialize Leaflet
             var mapOptions = {
@@ -36,6 +43,7 @@
             var popup = L.popup();
             map.on('click', onMapClick);
             var currentLayer = null;
+            var currentArea = null;
             
             // Add the OpenStreetMap tiles
             L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
@@ -51,43 +59,48 @@
                const geoJsonString = localStorage.getItem(itemName);
             
                if (geoJsonString) {
-                   const combinedPolygon = JSON.parse(geoJsonString);
-            
+                   const combinedPolygonData = JSON.parse(geoJsonString); 
+                   console.log(combinedPolygonData);
+                   currentArea = geojsonToTurf(combinedPolygonData);  
                    // Display the polygon on the map
-                   if (combinedPolygon) {
-            
+                   if (combinedPolygonData) {
                        // Add the GeoJSON to the map
-                       currentLayer = L.geoJSON(combinedPolygon, {
+                       currentLayer = L.geoJSON(currentArea, {
                            style: {
-                               color: 'purple', // Set a custom color for the combined polygon
+                               color: 'red', // Set a custom color for the combined polygon
                                weight: 2,
                                opacity: 0.7,
                                fillOpacity: 0.4
                            }
-                       }).addTo(map);
-            
+                       });
+                       currentLayer.addTo(map);
                        // Fit the map to the bounds of the polygon
-                       const bounds = L.geoJSON(combinedPolygon).getBounds();
+                       const bounds = L.geoJSON(currentArea).getBounds();
                        map.fitBounds(bounds);
                    }
                } else {
-                   alert('No GeoJSON data found for the selected item.');
+                   alert('No data found for this area');
                }
             } else {
                alert('No item specified.');
             }
 
-            document.getElementById('searchInput').addEventListener('keydown', function (event) {
-               if (event.key === 'Enter') {
-                 searchLocation();
-               }
-             });
-            
-            // Toggle menu visibility
+        // Toggle menu visibility
             function toggleMenu() {
-              const menu = document.getElementById('menu');
-              menu.classList.toggle('open');
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('open');
             }
+            
+            //matchingLine(2799184, true);
+            //radar([47.14062,8.52608], 0.4, false);
+            //tentacles([47.16051,8.51803],2,[[47.18315,8.48145],[47.15536,8.55114],[47.13363,8.53500],[47.13924,8.49380],[47.16755,8.51680],[47.18726,8.52207]],1);
+            measuringLake(0.1,true);
+            //measuringPoints([[46.23633,6.10777],[47.46084,8.55199],[47.59674,7.52622]],10,true);
+            //measuringMcDonalds(5,false);
+
+
+            //measuringElevation(2200,true);
+           
         </script>
     </body>
 </html>
