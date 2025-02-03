@@ -156,7 +156,7 @@ async function searchLocation() {
         addLocationToGame(items);
 
     } else {
-        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(input)}&layer=address&limit=5&format=json&polygon_geojson=1&polygon_threshold=0.0005`;
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(input)}&layer=address&limit=5&format=json&polygon_geojson=1&polygon_threshold=0.001`;
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -186,13 +186,12 @@ function submit() {
 
     // Combine polygons from 'gameArea' into one
     if (gameArea) {
-        for (const place of gameArea) {
-            console.log(place);
+        for (const place of gameArea) { 
             combinedPolygon = combinedPolygon ? turf.union(combinedPolygon, place) : place;
         }
     }
     if (combinedPolygon) {
-        
+        combinedPolygon = turf.truncate(combinedPolygon, {precision:5,coordinates:2}) //Save some storage space (Max 5MB of local storage might be reached)
         const geoJsonString = JSON.stringify(combinedPolygon);
         const jsonObject = {
             geojson: geoJsonString,  // Store the GeoJSON string

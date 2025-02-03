@@ -21,7 +21,7 @@
 
         <!-- Hiding Area Size -->
         <div class="setting-group">
-            <label for="hiding-area">Size of Hiding Area (sq km):</label>
+            <label for="hiding-area">Radius of Hiding Area (according to the selected unit):</label>
             <input type="number" id="hiding-area" min="0" step="0.1">
         </div>
 
@@ -69,8 +69,9 @@
         alert("Error: No game data found.");
     }
     
-    gameData = JSON.parse(gameData);
-    if(gameData.settings){
+    gameData = JSON.parse(gameData); 
+    //If there is no data saved then skip this step, otherwise reload the previous questions.
+    if(gameData.settings == {}){
         const settings = gameData.settings;
         // Load settings if they exist
         document.getElementById('hiding-area').value = settings.hiding_area; // Default: 2 sq km
