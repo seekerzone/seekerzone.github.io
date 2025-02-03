@@ -72,11 +72,11 @@
     
     gameData = JSON.parse(gameData); 
     //If there is no data saved then skip this step, otherwise reload the previous questions.
-    if(gameData.settings == {}){
+    if(Object.keys(gameData.settings).length !== 0){
         const settings = gameData.settings;
         // Load settings if they exist
         document.getElementById('hiding-area').value = settings.hiding_area; // Default: 2 sq km
-        document.getElementById('lake-definition').value = settings.lake_definition; // Default: 0.2 sq km
+        document.getElementById('lake-definition').value = settings.lake_definition; // Default: 0.2 sq km 
         document.getElementById('airport-coordinates').value = settings.coordinates_of_airports.join('; ');
 
         // Set unit radio buttons
