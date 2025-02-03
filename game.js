@@ -22,14 +22,13 @@ function onMapClick(e) {
    }
 
 function radar(center, radius, success) {
+    const div = (gameSettings.unit === 'miles') ? 69.08 : 111.1735;
     // Create a D3 circle using d3.geoCircle
-    const circleGenerator = d3.geoCircle()
+    const circle = d3.geoCircle()
         .center([center[1], center[0]])  
-        .radius(radius / 69.08) // Radius in degrees (from miles)
-        .precision(18);  
-
-    const circle = circleGenerator(); // Generate the GeoJSON circle
-
+        .radius(radius / div) // Radius in degrees (from miles)
+        .precision(18)();  
+ 
     // Handle success or failure
     if (success) {
         // The radar is a hit: intersect the current area with the circle
@@ -63,7 +62,7 @@ function tentacles(center, radius, points, index) {
 }
 
 
-async function measuringLake(distance, closer, unit='miles', area_threshold = 200000) {
+async function measuringLake(distance, closer, unit=gameSettings.unit, area_threshold = gameSettings.lake_definition*1000000) {
     const bbox = turf.bbox(currentArea);
 
     const query = `
@@ -108,7 +107,7 @@ async function measuringLake(distance, closer, unit='miles', area_threshold = 20
         });
         return simplifiedFeature;
     });
-    lakes = turf.buffer(turf.featureCollection(lakes), distance, {units: unit})
+    lakes = turf.buffer(turf.featureCollection(lakes), distance, {units: gameSettings.unit})
     lakes = turf.combine(lakes).features[0]; 
     if (closer){
         currentArea = turf.intersect(currentArea,lakes);
@@ -127,15 +126,13 @@ function matchingPoints(points, index){ //Is your closest (element from a set of
 }
 
 function measuringPoints(points,distance,closer){//Are you closer or further from (any element within a set of points) compared to me? 
+    const div = (gameSettings.unit === 'miles') ? 69.08 : 111.1735;
     if(closer){
-        const circleFeatures = points.map(point =>
-        turf.feature(d3.geoCircle()
+    const circleFeatures = points.map(point => d3.geoCircle()
             .center([point[1], point[0]])
-            .radius(distance / 69.08)
-            .precision(18))
-    );
-    const featureCollection = turf.featureCollection(circleFeatures);
-    const combinedCircles = turf.union(...featureCollection.features);
+            .radius(distance / 69.08) // Convert distance to degrees
+            .precision(18)());
+    const combinedCircles = turf.union(...turf.featureCollection(circleFeatures).features);
     currentArea = turf.intersect(combinedCircles, currentArea);
     updateMap();
 
@@ -214,7 +211,7 @@ async function matchingArea(id, isMatching){//Are you within the same area as us
     updateMap();
 }
 
-async function matchingTrainLine(id, isMatching, gameArea = 1){//Does our train/bus service stop at your station (considering the whole service and not only the train we boarded)? 
+async function matchingTrainLine(id, isMatching, gameArea = gameSettings.hiding_area){//Does our train/bus service stop at your station (considering the whole service and not only the train we boarded)? 
     const query = `
     [out:json];
     relation(${id}) -> .rel;
@@ -247,7 +244,7 @@ async function matchingTrainLine(id, isMatching, gameArea = 1){//Does our train/
 }
  
 
-async function getTransportationCoordinates(modes = ['train']){//train,bus,subway,lightrail,monorail,funicular
+async function getTransportationCoordinates(modes = gameSettings.types_of_transportation){//train,bus,subway,lightrail,monorail,funicular
     // Bounding box for the query (you may need to define or pass it)
     const bbox = turf.bbox(currentArea);
 
@@ -282,7 +279,7 @@ async function getTransportationCoordinates(modes = ['train']){//train,bus,subwa
 }
 
 
-async function measuringElevation(elevation, isHigher, gameArea=1, safeBound = 5) { //Compared to my elevation has your station a higher elevation?
+async function measuringElevation(elevation, isHigher, gameArea=gameSettings.hiding_area, safeBound = 5) { //Compared to my elevation has your station a higher elevation?
     //Safebound used to account for possible difference in elevations between datasets
     var stations = await getTransportationCoordinates(['train']);  
     if(stations.length > 5000){

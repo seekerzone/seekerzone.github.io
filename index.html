@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div class="element"></div>
     <div class="container">
         <h1>Select Game</h1>
         <button id="newGameButton" class="new-game-button" onclick="redirectToNewGame()">New Game</button>
@@ -15,7 +14,7 @@
             <!-- Buttons from local storage will be added here -->
         </div>
     </div>
-</body>
+
     <script> 
         // Function to populate the buttons based on local storage
         function loadButtonsFromLocalStorage() {
@@ -30,6 +29,7 @@
                 const buttonContainer = document.createElement('div');
                 buttonContainer.className = 'button-container';
 
+                // Main game button
                 const button = document.createElement('button');
                 button.className = 'game-button';
                 button.textContent = key; // Use the key as the button label
@@ -37,6 +37,20 @@
                     window.location.href = `game.html?item=${key}`;
                 };
 
+                // Settings button
+                const settingsButton = document.createElement('button');
+                settingsButton.className = 'settings-button';
+                settingsButton.onclick = () => {
+                    window.location.href = `settings.html?item=${key}`;
+                };
+
+                // Add settings icon inside the button
+                const settingsIcon = document.createElement('img');
+                settingsIcon.src = 'images/settings.png';
+                settingsIcon.alt = 'Settings';
+                settingsButton.appendChild(settingsIcon);
+
+                // Delete button
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
                 deleteButton.textContent = 'X';
@@ -45,7 +59,9 @@
                     loadButtonsFromLocalStorage(); // Reload the buttons
                 };
 
+                // Append buttons to the container
                 buttonContainer.appendChild(button);
+                buttonContainer.appendChild(settingsButton);
                 buttonContainer.appendChild(deleteButton);
                 gameButtonsContainer.appendChild(buttonContainer);
             });
@@ -59,4 +75,5 @@
         // Load the buttons on page load
         window.onload = loadButtonsFromLocalStorage;
     </script>
+</body>
 </html>

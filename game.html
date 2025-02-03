@@ -44,6 +44,7 @@
             map.on('click', onMapClick);
             var currentLayer = null;
             var currentArea = null;
+            var gameSettings = null; 
             
             // Add the OpenStreetMap tiles
             L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
@@ -56,14 +57,13 @@
             
             if (itemName) {
                // Retrieve the GeoJSON from local storage
-               const geoJsonString = localStorage.getItem(itemName);
+               const gameJSON = JSON.parse(localStorage.getItem(itemName));
             
-               if (geoJsonString) {
-                   const combinedPolygonData = JSON.parse(geoJsonString); 
-                   console.log(combinedPolygonData);
-                   currentArea = geojsonToTurf(combinedPolygonData);  
-                   // Display the polygon on the map
-                   if (combinedPolygonData) {
+               if (gameJSON) {  
+                   gameSettings = gameJSON.settings
+                   currentArea = geojsonToTurf(JSON.parse(gameJSON.geojson));  
+                   // Display the polygon on the map 
+                   if (currentArea) {
                        // Add the GeoJSON to the map
                        currentLayer = L.geoJSON(currentArea, {
                            style: {
@@ -92,14 +92,14 @@
             }
             
             //matchingLine(2799184, true);
-            //radar([47.14062,8.52608], 0.4, false);
+            //radar([45.98829,8.93180], 0.4, true);
             //tentacles([47.16051,8.51803],2,[[47.18315,8.48145],[47.15536,8.55114],[47.13363,8.53500],[47.13924,8.49380],[47.16755,8.51680],[47.18726,8.52207]],1);
-            measuringLake(0.1,true);
-            //measuringPoints([[46.23633,6.10777],[47.46084,8.55199],[47.59674,7.52622]],10,true);
+            //measuringLake(0.1,true);
+            //measuringPoints([[46.04067,8.96323],[45.89358,9.01813]],1,true);
             //measuringMcDonalds(5,false);
 
 
-            //measuringElevation(2200,true);
+            measuringElevation(200,true);
            
         </script>
     </body>

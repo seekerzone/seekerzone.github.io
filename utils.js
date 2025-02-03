@@ -192,10 +192,16 @@ function submit() {
         }
     }
     if (combinedPolygon) {
+        
         const geoJsonString = JSON.stringify(combinedPolygon);
-        localStorage.setItem(itemName, geoJsonString);
+        const jsonObject = {
+            geojson: geoJsonString,  // Store the GeoJSON string
+            runs: [],  // Initialize an empty list for runs
+            settings: {}  // Initialize an empty object for settings
+        };
+        localStorage.setItem(itemName, JSON.stringify(jsonObject));
         // Redirect to the next page, passing the item name as a query parameter
-        window.location.href = `game.html?item=${encodeURIComponent(itemName)}`;
+        window.location.href = `settings.html?item=${encodeURIComponent(itemName)}`;
     }
 }
 
@@ -237,7 +243,7 @@ function geojsonToTurf(geojson) {
         // Return a MultiPolygon with one set of coords
         return turf.multiPolygon([coords]);
     } else if (gType === 'MultiPolygon') {
-        // Already MultiPolygon
+        // Already MultiPolygon 
         return turf.multiPolygon(coords);
     } else {
         // Try to interpret if it might be convertible

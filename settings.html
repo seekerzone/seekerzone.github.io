@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Settings</title>
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <div class="settings-container">
+        <h1>Game Settings</h1>
+
+        <!-- Distance Unit -->
+        <div class="setting-group">
+            <label for="km">Unit of Distance:</label>  <!-- Added for="km" -->
+            <div class="radio-group">
+                <label for="km"><input type="radio" name="unit" value="kilometers" checked id="km"> Kilometers</label>
+                <label for="miles"><input type="radio" name="unit" value="miles" id="miles"> Miles</label>
+            </div>
+        </div>
+
+        <!-- Hiding Area Size -->
+        <div class="setting-group">
+            <label for="hiding-area">Size of Hiding Area (sq km):</label>
+            <input type="number" id="hiding-area" min="0" step="0.1">
+        </div>
+
+        <!-- Definition of Lake -->
+        <div class="setting-group">
+            <label for="lake-definition">Minimum Lake Size (sq km):</label>
+            <input type="number" id="lake-definition" min="0" step="0.01">
+        </div>
+
+        <!-- Airport Coordinates -->
+        <div class="setting-group">
+            <label for="airport-coordinates">Coordinates of Airports (lat,lon; separated by semicolon):</label>
+            <textarea id="airport-coordinates" rows="3"></textarea>
+        </div>
+
+        <!-- Transportation Types -->
+        <div class="setting-group">
+            <label>Types of Transportation Stops:</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="transportation" value="train" checked> Train</label>
+                <label><input type="checkbox" name="transportation" value="bus"> Bus</label>
+                <label><input type="checkbox" name="transportation" value="subway"> Subway</label>
+                <label><input type="checkbox" name="transportation" value="lightrail"> Lightrail</label>
+                <label><input type="checkbox" name="transportation" value="monorail"> Monorail</label>
+                <label><input type="checkbox" name="transportation" value="funicular"> Funicular</label>
+            </div>
+        </div>
+
+        <!-- Save Settings Button -->
+        <button id="save-settings">Save Settings</button>
+    </div>
+
+    <script>
+    // Read the item name from the URL
+    const params = new URLSearchParams(window.location.search);
+    const itemName = params.get("item");
+
+    if (!itemName) {
+        alert("Error: No item found in URL.");
+    }
+
+    // Retrieve the stored game object from localStorage
+    let gameData = localStorage.getItem(itemName);
+    if (!gameData) {
+        alert("Error: No game data found.");
+    }
+    
+    gameData = JSON.parse(gameData);
+    if(gameData.settings){
+        const settings = gameData.settings;
+        // Load settings if they exist
+        document.getElementById('hiding-area').value = settings.hiding_area; // Default: 2 sq km
+        document.getElementById('lake-definition').value = settings.lake_definition; // Default: 0.2 sq km
+        document.getElementById('airport-coordinates').value = settings.coordinates_of_airports.join('; ');
+
+        // Set unit radio buttons
+        if (settings.unit === 'miles') {
+            document.getElementById('miles').checked = true;
+        } else {
+            document.getElementById('km').checked = true;
+        }
+
+        // Set transportation checkboxes 
+        const transportTypes = settings.types_of_transportation; // Default: only train selected 
+        document.querySelectorAll('.setting-group input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = transportTypes.includes(checkbox.value);
+        });
+    }
+    
+    document.getElementById("save-settings").addEventListener("click", function() {
+    // Read values from the form
+    const unit = document.querySelector('input[name="unit"]:checked').value;
+    const hidingArea = parseFloat(document.getElementById("hiding-area").value);
+    const lakeDefinition = parseFloat(document.getElementById("lake-definition").value);
+    const airportCoords = document.getElementById("airport-coordinates").value
+        .split(";")
+        .map(coord => coord.trim().split(",").map(val => parseFloat(val)))
+        .filter(coord => coord.length > 0); // Convert string to list and remove empty values
+
+    const selectedTransportations = Array.from(document.querySelectorAll('input[name="transportation"]:checked'))
+        .map(checkbox => checkbox.value); // Get selected transport options
+
+    // Update the gameData object
+    gameData.settings = {
+        unit,
+        hiding_area: hidingArea,
+        lake_definition: lakeDefinition,
+        coordinates_of_airports: airportCoords,
+        types_of_transportation: selectedTransportations
+    };
+
+    // Save the updated data back to localStorage
+    localStorage.setItem(itemName, JSON.stringify(gameData));
+
+    window.location.href = `game.html?item=${encodeURIComponent(itemName)}`;
+});
+
+    </script>
+</body>
+</html>

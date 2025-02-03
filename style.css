@@ -11,8 +11,8 @@ position: relative;
 /* Style for the button */
 .custom-button {
 position: absolute;
-top: 10px;
-left: 10px;
+top: 2vh;
+left: 2vw;
 z-index: 1000;
 background-color: white;
 border: 1px solid #ccc;
@@ -23,8 +23,8 @@ cursor: pointer;
 display: flex;
 align-items: center;
 justify-content: center;
-width: 3vw;
-height: 3vw;
+width: 5vh;
+height: 5vh;
 }
 .custom-button img {
 width: 80%;
@@ -35,8 +35,8 @@ display: block;
 .menu {
     position: fixed;
     top: 0;
-    left: -30vw; /* Hidden by default on the left side */
-    width: 25vw;
+    left: -100vw; /* Hidden by default on the left side */
+    width: 60vw;
     height: 100%;
     background-color: #fff;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Adjusted shadow to match left side */
@@ -53,14 +53,16 @@ display: block;
 /* Close button for the menu */
 .menu .close-button {
     position: absolute;
-    top: 10px;
-    left: 10px; /* Position close button on the left side */
+    top: 2vh;
+    left: 2vw; /* Position close button on the left side */
+    margin-bottom: 5vh;
+    bottom: 10vw;
     background-color: #f44336;
     color: white;
     border: none;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 5vh;
+    height: 5vh;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -71,7 +73,7 @@ display: block;
 /* Search bar styles */
 .search-bar {
 position: absolute;
-top: 10px;
+top: 2vh;
 left: 50%;
 transform: translateX(-50%);
 z-index: 1000;
@@ -81,6 +83,7 @@ background-color: white;
 border: 1px solid #ccc;
 border-radius: 5px;
 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+height: 7vh;
 }
 .search-bar input {
 flex: 9;
@@ -101,11 +104,11 @@ cursor: pointer;
 /* Style for the search results */
 .search-results {
     position: absolute;
-    top: 50px;
+    top: 10vh;
     left: 50%;
-    transform: translateX(-40%);
+    transform: translateX(-50%);
     z-index: 1000;
-    width: 40%;
+    width: 80%;
     margin-top: 0px;
     overflow: hidden;
 }
@@ -114,9 +117,10 @@ cursor: pointer;
 .search-result-item {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 1vh;
     border: 1px solid #ccc;
     border-radius: 5px;
+    height: 7vh;
     background-color: #f8f8f8;
     overflow: hidden;
 }
@@ -153,6 +157,7 @@ cursor: pointer;
     cursor: pointer; /* Pointer cursor on hover */
     transition: background-color 0.3s ease; /* Smooth transition for hover effect */
     padding: 10px;
+    font-size: 12px;
 }
 
 .search-results .plus-button:hover {
@@ -165,8 +170,8 @@ cursor: pointer;
 /* Style for the hint box */
 .hint-box {
     position: absolute;
-    bottom: 10px;
-    left: 10px;
+    bottom: 2vh;
+    left: 2vw;
     width: 20vw;
     padding: 10px;
     background-color: white;
@@ -224,8 +229,8 @@ cursor: pointer;
 /* Style for the submit input container */
 .submit-input-container {
     position: absolute;
-    bottom: 20px;
-    right: 10px;
+    bottom: 2vh;
+    right: 2vw;
     z-index: 1100;
     display: flex;
     align-items: center;
@@ -234,7 +239,6 @@ cursor: pointer;
 /* Style for the input field */
 .submit-input-container input {
     padding: 10px 15px;
-    width: 200px;
     background-color: #ffffff;
     color: #333;
     border: 2px solid #007bff;
@@ -243,6 +247,7 @@ cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     outline: none;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    max-width: 35vw;
 }
 
 .submit-input-container input:focus {
@@ -259,8 +264,7 @@ cursor: pointer;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: bold;
-    margin-left: 10px;
+    font-weight: bold; 
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
 }
